@@ -15,7 +15,9 @@ import {
   Briefcase,
   ChevronLeft,
   ChevronRight,
+  Video
 } from "lucide-react";
+
 
 const navigation = [
   { name: "Dashboard", href: "/", icon: LayoutDashboard },
@@ -24,6 +26,7 @@ const navigation = [
   { name: "Communication", href: "/communication", icon: MessageSquare },
   // { name: "Interviews", href: "/interviews", icon: Calendar },
   { name: "Analytics", href: "/analytics", icon: BarChart3 },
+  { name: "Video", href: "/videoanalysis", icon: Video },
   // { name: "Settings", href: "/settings", icon: Settings },
 ];
 
