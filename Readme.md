@@ -22,6 +22,8 @@ A modern, AI-powered recruitment platform built with Next.js, React, and Tailwin
 - [Zod](https://zod.dev/) (validation)
 - [Sonner](https://sonner.emilkowal.ski/) (notifications)
 - [Lucide Icons](https://lucide.dev/)
+- Recharts
+- Typescript
 
 ## Getting Started
 
