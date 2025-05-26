@@ -111,36 +111,6 @@ Open [http://localhost:3000](http://localhost:3000) in your browser.
 - `pnpm start` — Start the production server
 - `pnpm lint` — Lint the codebase
 
-## API Endpoints
-
-### Analyze Resume
-
-`POST /api/analyze-resume`
-
-- **Body:** `FormData` with `resume` (file), `position` (string)
-- **Description:** Analyzes a resume PDF using Google Gemini AI.
-
-### Analyze Video
-
-`POST /api/analyze-video`
-
-- **Body:** JSON with `candidateId`, `videoFilename`
-- **Description:** Analyzes a candidate's video using Google Gemini AI.
-
-### Send Single Interview Invite
-
-`POST /api/send-single-invite`
-
-- **Body:** JSON with candidate and interview details
-- **Description:** Sends an interview invitation email via Gmail.
-
-### Generate Message
-
-`POST /api/generate-message`
-
-- **Body:** JSON with `candidateName`, `position`, `messageType`, `context`
-- **Description:** Generates a professional message using OpenAI GPT-4o.
-
 ## Customization
 
 - **UI Theme:** Tailwind CSS and Radix UI are used for styling. Edit `tailwind.config.ts` and `app/globals.css` as needed.
