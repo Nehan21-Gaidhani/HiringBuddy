@@ -410,8 +410,7 @@ export default function CandidatesPage() {
                       <Tabs defaultValue="videos" className="w-full">
                         <TabsList className="grid w-full grid-cols-4">
                           <TabsTrigger value="videos">Videos</TabsTrigger>
-                          <TabsTrigger value="resume">Resume</TabsTrigger>
-                          <TabsTrigger value="analysis">Resume Analysis</TabsTrigger>
+                         
                           <TabsTrigger value="video-analysis">Video Analysis</TabsTrigger>
                         </TabsList>
 
