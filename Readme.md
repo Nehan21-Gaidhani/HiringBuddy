@@ -1,5 +1,5 @@
 # HiringBuddy
-
+DEMO link- https://hiringbuddy-1.onrender.com/
 A modern, AI-powered recruitment platform built with Next.js, React, and Tailwind CSS. HiringBuddy streamlines candidate management, interview scheduling, and communication, leveraging AI for resume and video analysis.
 
 ## Features
