@@ -6,7 +6,7 @@ A modern, AI-powered recruitment platform built with Next.js, React, and Tailwin
 
 - Candidate management dashboard
 - Job postings and application tracking
-- AI-powered resume and video analysis (Google Gemini, OpenAI GPT-4o)
+- AI-powered resume and video analysis (Google Gemini)
 - Automated interview invitation emails (Gmail + Nodemailer)
 - Professional message generation for candidate communication
 - Modern UI with Tailwind CSS and Radix UI components
@@ -16,7 +16,6 @@ A modern, AI-powered recruitment platform built with Next.js, React, and Tailwin
 - [Next.js](https://nextjs.org/) (App Router)
 - [React](https://react.dev/) 19
 - [Tailwind CSS](https://tailwindcss.com/)
-- [OpenAI API](https://platform.openai.com/)
 - [Google Generative AI (Gemini)](https://ai.google.dev/)
 - [Nodemailer](https://nodemailer.com/) (Gmail SMTP)
 - [Zod](https://zod.dev/) (validation)
