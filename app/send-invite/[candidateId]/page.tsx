@@ -32,7 +32,7 @@ const candidatesListFromStaticFile = [
   {
     id: 1,
     name: "Sarah Johnson",
-    email: "ayushdhamecha02@gmail.com",
+    email: "parthwankar@gmail.com",
     position: "Senior Frontend Developer",
   },
   {
