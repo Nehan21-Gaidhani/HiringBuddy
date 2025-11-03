@@ -212,9 +212,7 @@ export default function CandidatesPage() {
   const loadCandidateVideos = async (candidateId: number) => {
     try {
       const response = await fetch(`/api/get-candidate-videos?candidateId=${candidateId}`)
-      if (!response.ok) {
-        throw new Error("Failed to fetch videos")
-      }
+      if (!response.ok) throw new Error("Failed to fetch videos")
       const data = await response.json()
       setCandidateVideos(data.videos || [])
     } catch (error) {
@@ -223,54 +221,22 @@ export default function CandidatesPage() {
     }
   }
 
-  const analyzeResume = async (candidateId: number) => {
-    setAnalyzing(candidateId)
-
-    // Simulate AI analysis
-    setTimeout(() => {
-      const candidateIndex = candidates.findIndex((c) => c.id === candidateId)
-      if (candidateIndex !== -1) {
-        candidates[candidateIndex].resumeAnalyzed = true
-        candidates[candidateIndex].analysis = {
-          score: Math.floor(Math.random() * 20) + 75,
-          skills: ["React", "TypeScript", "Node.js", "Python", "AWS"],
-          experience: "4+ years",
-          education: "Computer Science, BS",
-          strengths: [
-            "Strong technical background in modern technologies",
-            "Proven problem-solving skills",
-            "Excellent communication abilities",
-          ],
-          concerns: ["Limited experience with specific domain", "No leadership experience"],
-          matchedPositions: [
-            { title: "Software Engineer", match: 88 },
-            { title: "Full Stack Developer", match: 82 },
-            { title: "Frontend Developer", match: 79 },
-          ],
-        }
-      }
-      setAnalyzing(null)
-    }, 3000)
-  }
-
   const analyzeVideo = async (candidateId: number, videoFilename: string) => {
     const analysisKey = `${candidateId}-${videoFilename}`
     setAnalyzingVideo(analysisKey)
 
     try {
-      const response = await fetch("/api/analyze-video/", {
+      // ✅ Correct API endpoint
+      const response = await fetch("/api/analyze-video", {
         method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
+        headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ candidateId, videoFilename }),
       })
 
+      if (!response.ok) throw new Error("Video analysis failed")
+
       const analysis = await response.json()
-      setVideoAnalyses((prev) => ({
-        ...prev,
-        [analysisKey]: analysis,
-      }))
+      setVideoAnalyses((prev) => ({ ...prev, [analysisKey]: analysis }))
     } catch (error) {
       console.error("Video analysis failed:", error)
     } finally {
@@ -283,13 +249,15 @@ export default function CandidatesPage() {
       <div className="flex items-center justify-between">
         <div>
           <h1 className="text-3xl font-bold">Introduction Videos</h1>
-          <p className="text-muted-foreground">Streamline candidate video reviews with intelligent AI assistance</p>
+          <p className="text-muted-foreground">
+            Streamline candidate video reviews with intelligent AI assistance
+          </p>
         </div>
-        
       </div>
-<Card>
-        
+
+      <Card>
         <CardContent>
+          {/* search + filter */}
           <div className="flex flex-col md:flex-row gap-4 mb-6">
             <div className="flex-1">
               <div className="relative">
@@ -302,6 +270,7 @@ export default function CandidatesPage() {
                 />
               </div>
             </div>
+
             <Select value={statusFilter} onValueChange={setStatusFilter}>
               <SelectTrigger className="w-full md:w-48">
                 <SelectValue placeholder="Filter by status" />
@@ -315,6 +284,7 @@ export default function CandidatesPage() {
                 <SelectItem value="Final Interview">Final Interview</SelectItem>
               </SelectContent>
             </Select>
+
             <Select value={positionFilter} onValueChange={setPositionFilter}>
               <SelectTrigger className="w-full md:w-48">
                 <SelectValue placeholder="Filter by position" />
@@ -330,6 +300,7 @@ export default function CandidatesPage() {
             </Select>
           </div>
 
+          {/* candidates */}
           <div className="space-y-4">
             {filteredCandidates.map((candidate) => (
               <div
@@ -349,21 +320,19 @@ export default function CandidatesPage() {
                 <div className="flex-1 space-y-1">
                   <div className="flex items-center space-x-2">
                     <h3 className="font-semibold">{candidate.name}</h3>
-                    
-                    
                     <Badge variant="outline" className="text-xs">
-                      <Video className="h-3 w-3 mr-1" />
-                      Videos Available
+                      <Video className="h-3 w-3 mr-1" /> Videos Available
                     </Badge>
                     {candidate.resumeAnalyzed && (
                       <Badge variant="outline" className="text-xs text-green-600">
-                        <Brain className="h-3 w-3 mr-1" />
-                        Resume Analyzed
+                        <Brain className="h-3 w-3 mr-1" /> Resume Analyzed
                       </Badge>
                     )}
                   </div>
+
                   <p className="text-sm text-muted-foreground">{candidate.email}</p>
                   <p className="text-sm font-medium">{candidate.position}</p>
+
                   <div className="flex items-center space-x-2">
                     <Badge variant="outline" className={`text-white ${getStatusColor(candidate.status)}`}>
                       {candidate.status}
@@ -372,6 +341,7 @@ export default function CandidatesPage() {
                       {candidate.experience} • Applied {candidate.appliedDate}
                     </span>
                   </div>
+
                   <div className="flex flex-wrap gap-1 mt-2">
                     {candidate.skills.map((skill) => (
                       <Badge key={skill} variant="secondary" className="text-xs">
@@ -392,15 +362,17 @@ export default function CandidatesPage() {
                           loadCandidateVideos(candidate.id)
                         }}
                       >
-                        <Eye className="h-4 w-4 mr-1" />
-                        View
+                        <Eye className="h-4 w-4 mr-1" /> View
                       </Button>
                     </DialogTrigger>
+
                     <DialogContent className="max-w-7xl max-h-[90vh] overflow-y-auto">
                       <DialogHeader>
                         <DialogTitle className="flex items-center space-x-2">
                           <span>{candidate.name}</span>
-                          <Badge className={`${getScoreColor(candidate.score)} border-0`}>{candidate.score}%</Badge>
+                          <Badge className={`${getScoreColor(candidate.score)} border-0`}>
+                            {candidate.score}%
+                          </Badge>
                         </DialogTitle>
                         <DialogDescription>
                           {candidate.position} • {candidate.email}
@@ -410,7 +382,6 @@ export default function CandidatesPage() {
                       <Tabs defaultValue="videos" className="w-full">
                         <TabsList className="grid w-full grid-cols-4">
                           <TabsTrigger value="videos">Videos</TabsTrigger>
-                         
                           <TabsTrigger value="video-analysis">Video Analysis</TabsTrigger>
                         </TabsList>
 
@@ -457,25 +428,6 @@ export default function CandidatesPage() {
                           )}
                         </TabsContent>
 
-                        <TabsContent value="resume" className="space-y-4">
-                          <div className="flex items-center justify-between">
-                            <h3 className="text-lg font-semibold">Resume Document</h3>
-                            <Button variant="outline" size="sm">
-                              <Download className="h-4 w-4 mr-1" />
-                              Download PDF
-                            </Button>
-                          </div>
-                          <div className="border rounded-lg p-4 bg-muted/20">
-                            <img
-                              src={candidate.resumeUrl || "/placeholder.svg?height=800&width=600"}
-                              alt="Resume"
-                              className="w-full h-auto max-h-96 object-contain rounded"
-                            />
-                          </div>
-                        </TabsContent>
-
-                     
-
                         <TabsContent value="video-analysis" className="space-y-4">
                           {Object.keys(videoAnalyses).filter((key) => key.startsWith(`${candidate.id}-`)).length > 0 ? (
                             <div className="space-y-6">
@@ -507,12 +459,6 @@ export default function CandidatesPage() {
                       </Tabs>
                     </DialogContent>
                   </Dialog>
-
-                  
-
-                 
-                  
-                 
                 </div>
               </div>
             ))}
@@ -530,7 +476,7 @@ export default function CandidatesPage() {
                     <p className="text-sm text-muted-foreground">
                       {analyzing
                         ? "Extracting skills, experience, and matching with job requirements"
-                        : "Transcribing audio, analyzing tone, confidence, and communication skills using Gemini AI"}
+                        : "Transcribing audio, analyzing tone, confidence, and communication skills using Gemimi AI"}
                     </p>
                     <Progress value={33} className="w-full mt-2" />
                   </div>

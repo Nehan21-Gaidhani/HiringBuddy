@@ -1,261 +1,138 @@
-// import { NextRequest, NextResponse } from "next/server";
-// import { GoogleGenerativeAI } from "@google/generative-ai";
-// import fs from "fs";
-// import path from "path";
-// import util from "util";
-// import fetch from "node-fetch";
-// import FormData from "form-data";
-
-// export async function POST(request: NextRequest) {
-//   try {
-//     const { candidateId, videoFilename } = await request.json();
-
-//     if (!candidateId || !videoFilename) {
-//       return NextResponse.json(
-//         { error: "Candidate ID and video filename required" },
-//         { status: 400 }
-//       );
-//     }
-
-//     if (!process.env.GOOGLE_API_KEY) {
-//       return NextResponse.json(
-//         { error: "Google API key not configured" },
-//         { status: 500 }
-//       );
-//     }
-
-//     const videoPath = path.join(process.cwd(), "public", "videos", videoFilename);
-//     const audioPath = videoPath.replace(path.extname(videoFilename), ".flac");
-
-//     // Convert video to audio
-//     await extractAudio(videoPath, audioPath);
-
-//     // Transcribe using your Python Whisper server
-//     const transcript = await transcribeWithWhisper(audioPath);
-
-//     const genAI = new GoogleGenerativeAI(process.env.GOOGLE_API_KEY);
-//     const model = genAI.getGenerativeModel({ model: "gemini-1.5-flash" });
-
-//     const prompt = `You are an expert HR assistant that analyzes video introductions from job candidates. Analyze the following video transcript and provide a comprehensive assessment.
-
-// Video Transcript: "${transcript}"
-
-// Please analyze the candidate's communication and provide a detailed JSON response with the following structure:
-// {
-//   "transcript": "${transcript}",
-//   "tone": "one of: Enthusiastic, Friendly, Nervous, Professional, Casual, Formal, Robotic",
-//   "confidence": "one of: High, Moderate, Low", 
-//   "clarity": "one of: Excellent, Good, Fair, Poor",
-//   "keywords": ["array of 5-8 important keywords and phrases from the speech"],
-//   "insights": ["array of 4-6 detailed observations about communication style, strengths, and areas for improvement"],
-//   "scores": {
-//     "enthusiasm": number (0-100),
-//     "confidence": number (0-100),
-//     "clarity": number (0-100), 
-//     "professionalism": number (0-100)
-//   },
-//   "communicationStrengths": ["array of 3-4 specific communication strengths"],
-//   "areasForImprovement": ["array of 2-3 areas where communication could be enhanced"],
-//   "overallAssessment": "2-3 sentence summary of the candidate's communication effectiveness"
-//   you can check some parameters by tracking if the candidate is using filler words like "um", "uh", "like", "you know" or if they are using technical vocabulary related to the job position."uh ,um " can show fluency issues, while technical vocabulary can show expertise and confidence in the subject matter.
-// }`;
-
-//     const result = await model.generateContent(prompt);
-//     const response = await result.response;
-//     const text = response.text();
-
-//     let analysis;
-//     try {
-//       const jsonMatch = text.match(/\{[\s\S]*\}/);
-//       if (jsonMatch) {
-//         analysis = JSON.parse(jsonMatch[0]);
-//       } else {
-//         throw new Error("No JSON found in response");
-//       }
-//     } catch (parseError) {
-//       console.error("Failed to parse AI response:", parseError);
-//       analysis = {
-//         transcript,
-//         tone: "Professional",
-//         confidence: "Moderate",
-//         clarity: "Good",
-//         keywords: ["experience", "passionate", "team", "solutions", "skills"],
-//         insights: [
-//           "Demonstrates relevant professional experience",
-//           "Shows enthusiasm for the role and company",
-//           "Communicates clearly and professionally",
-//           "Uses appropriate technical vocabulary",
-//         ],
-//         scores: {
-//           enthusiasm: 75,
-//           confidence: 70,
-//           clarity: 80,
-//           professionalism: 85,
-//         },
-//         communicationStrengths: [
-//           "Clear articulation and professional delivery",
-//           "Appropriate use of technical terminology",
-//           "Confident self-presentation",
-//         ],
-//         areasForImprovement: [
-//           "Could reduce use of filler words",
-//           "More specific examples would strengthen the presentation",
-//         ],
-//         overallAssessment:
-//           "The candidate demonstrates strong communication skills with professional delivery and clear articulation. Shows good confidence and enthusiasm for the role.",
-//       };
-//     }
-
-//     return NextResponse.json(analysis);
-//   } catch (error) {
-//     console.error("Video analysis error:", error);
-//     return NextResponse.json(
-//       {
-//         error: "Failed to analyze video",
-//         details: error instanceof Error ? error.message : "Unknown error",
-//       },
-//       { status: 500 }
-//     );
-//   }
-// }
-
-// // Extract audio using ffmpeg
-// async function extractAudio(videoPath: string, audioPath: string): Promise<void> {
-//   const exec = util.promisify(require("child_process").exec);
-//   const command = `ffmpeg -y -i "${videoPath}" -vn -acodec flac "${audioPath}"`;
-//   await exec(command);
-// }
-
-// Transcribe using Python Whisper server
-// async function transcribeWithWhisper(audioFilePath: string): Promise<string> {
-//   const fileStream = fs.createReadStream(audioFilePath);
-//   const form = new FormData();
-//   form.append("file", fileStream, path.basename(audioFilePath));
-
-//   const response = await fetch("http://localhost:5001/transcribe", {
-//     method: "POST",
-//     body: form as any,
-//   });
-
-//   if (!response.ok) {
-//     const errorText = await response.text();
-//     throw new Error(`Whisper server error: ${errorText}`);
-//   }
-
-//   const data = await response.json();
-//   return data.transcript || "Transcript could not be extracted.";
-// }
-
-
-
-
-// import { NextRequest, NextResponse } from "next/server";
-
-// export async function POST(request: NextRequest) {
-//   try {
-//     const { candidateId, videoFilename } = await request.json();
-
-//     if (!candidateId || !videoFilename) {
-//       return NextResponse.json({ error: "Missing data" }, { status: 400 });
-//     }
-    
-//     const response = await fetch("http://127.0.0.1:5001/analyze-video", {
-//       method: "POST",
-//       headers: { "Content-Type": "application/json" },
-//       body: JSON.stringify({ candidateId, videoFilename }),
-//     });
-  
-//     if (!response.ok) {
-//       console.log("Response not ok:", response.status, response.statusText);
-//       const errText = await response.text();
-//       return NextResponse.json({ error: "Python API failed", details: errText }, { status: 500 });
-//     }
-//     console.log("res2")
-//     const analysis = await response.json();
-//     console.log(analysis);
-//     return NextResponse.json(analysis);
-//   } catch (err) {
-//     console.error("Route TS error:", err);
-//     return NextResponse.json({ error: "Unexpected error" }, { status: 500 });
-//   }
-// }
-
-
-
-
-// app/api/analyze/route.ts
-
 import { NextRequest, NextResponse } from "next/server";
-import { GoogleGenerativeAI } from "@google/generative-ai";
+import { GoogleGenerativeAI, SchemaType } from "@google/generative-ai";
+
+// 🔹 Import same mock data logic directly (copied or modularized)
+const mockVideos: Record<string, any[]> = {
+  "1": [
+    {
+      filename: "introduction.mp4",
+      transcript:
+        "Myself Nijan, basically born and bought up in Mundia, I'm working as a senior software testing engineer. I could have worked with Quebec's computer software private limiter from past three years. I have a three years of experience into manual testing, mobile and web application testing, and also I have performed API testing in my organization. So in these three years of span, I have worked on two projects that is both, I have worked on e-commerce domain itself. So firstly, Nandu's and B&N, Nandu's is an e-commerce application where I have used certain tools like GERA to lock the defect, and also Charles Proxy for network blocking and throttling the network, and also debuting the backend APIs. Even though I have used a postman tool to perform the API testing where I can check only the request and response. And also after that, I have got to opportunity to work on another project called as B&N. So it's an e-commerce application where I'll be in part of understanding the requirement and writing a test plan and then writing a test plan.",
+    },
+  ],
+  "2": [
+    {
+      filename: "introduction2.mp4",
+      transcript:
+        "Hello everyone, my name is Nehanshu Gaidhani and I am passionate software developer. I have completed my engineering with 9.6 CGPA. I have proficiency in C++ language and I do regular competitive programming in C++. I am passionate about web development in backend as well as frontend. I am proficient in JavaScript and I can build eye-catching websites with beautiful designs with backend made in Node.js and with the help of Express.js.",
+    },
+  ],
+  "3": [
+    {
+      filename: "introduction3.mp4",
+      transcript:
+        "Good afternoon, I am Ayush Dhamecacha and I am a versatile frontend developer as well as a React developer. I have completed my six-month internship in Rich Academy, which is a foundation that caters NGOs to help them access the services which are paid to them, and as well as I can communicate in English effectively.",
+    },
+  ],
+  "4": [
+    {
+      filename: "introduction4.mp4",
+      transcript:
+        "Hi, my name is Rahul Aujah, a software engineer with a strong foundation in full stack development and AI powered applications. I have worked with projects ranging from web platforms to intelligent assistants using technologies like React, Node.js and Python. I am passionate about solving real world problems through scalable software and always eager to learn and grow. I am excited to be here and discuss how I can contribute to a team.",
+    },
+  ],
+};
 
 const GEMINI_API_KEY = process.env.GEMINI_API_KEY;
+if (!GEMINI_API_KEY) {
+  console.warn("⚠️ GEMINI_API_KEY not configured.");
+}
 
-function buildPrompt(transcript: string): string {
-  return `
-You are an expert HR assistant that analyzes video introductions from job candidates. Analyze the following video transcript and provide a comprehensive assessment.
+const genAI = GEMINI_API_KEY ? new GoogleGenerativeAI(GEMINI_API_KEY) : null;
+const modelName = "gemini-2.5-flash";
 
-Video Transcript: "${transcript}"
-
-Please analyze the candidate's communication and provide a detailed JSON response with the following structure:
-{
-  "transcript": "${transcript}",
-  "tone": "one of: Enthusiastic, Friendly, Nervous, Professional, Casual, Formal, Robotic",
-  "confidence": "one of: High, Moderate, Low", 
-  "clarity": "one of: Excellent, Good, Fair, Poor",
-  "keywords": ["array of 5-8 important keywords and phrases from the speech"],
-  "insights": ["array of 4-6 detailed observations about communication style, strengths, and areas for improvement"],
-  "scores": {
-    "enthusiasm": number (0-100),
-    "confidence": number (0-100),
-    "clarity": number (0-100), 
-    "professionalism": number (0-100)
+const feedbackSchema = {
+  type: SchemaType.OBJECT,
+  properties: {
+    transcript: { type: SchemaType.STRING },
+    tone: { type: SchemaType.STRING },
+    confidence: { type: SchemaType.STRING },
+    clarity: { type: SchemaType.STRING },
+    keywords: { type: SchemaType.ARRAY, items: { type: SchemaType.STRING } },
+    insights: { type: SchemaType.ARRAY, items: { type: SchemaType.STRING } },
+    scores: {
+      type: SchemaType.OBJECT,
+      properties: {
+        enthusiasm: { type: SchemaType.NUMBER },
+        confidence: { type: SchemaType.NUMBER },
+        clarity: { type: SchemaType.NUMBER },
+        professionalism: { type: SchemaType.NUMBER },
+      },
+    },
+    communicationStrengths: {
+      type: SchemaType.ARRAY,
+      items: { type: SchemaType.STRING },
+    },
+    areasForImprovement: {
+      type: SchemaType.ARRAY,
+      items: { type: SchemaType.STRING },
+    },
+    overallAssessment: { type: SchemaType.STRING },
   },
-  "communicationStrengths": ["array of 3-4 specific communication strengths"],
-  "areasForImprovement": ["array of 2-3 areas where communication could be enhanced"],
-  "overallAssessment": "2-3 sentence summary of the candidate's communication effectiveness"
-}`;
+} as const;
+
+function buildPrompt(transcript: string) {
+  return `
+You are an expert AI interviewer and communication coach.
+Analyze the following transcript and return structured JSON feedback.
+
+Transcript:
+---
+${transcript}
+---
+
+Focus on tone, confidence, clarity, and communication quality.
+Return valid JSON only.
+`;
 }
 
-function extractJSON(text: string): any {
-  const match = text.match(/\{[\s\S]*\}/);
-  if (!match) throw new Error("No JSON block found in response.");
-  return JSON.parse(match[0]);
-}
+export async function POST(req: NextRequest) {
+  console.log("📡 API hit → /api/analyze-video");
 
-export async function POST(request: NextRequest) {
+  if (!genAI) {
+    return NextResponse.json({ error: "Gemini API key missing" }, { status: 500 });
+  }
+
   try {
-    const { candidateId, videoFilename } = await request.json();
-    if (!candidateId || !videoFilename) {
-      return NextResponse.json({ error: "Missing candidateId or videoFilename" }, { status: 400 });
+    const { candidateId, videoFilename } = await req.json();
+    console.log(`🎞️ Candidate ${candidateId}, video ${videoFilename}`);
+
+    const candidateVideos = mockVideos[candidateId];
+    const video = candidateVideos?.find((v) => v.filename === videoFilename);
+
+    if (!video) {
+      return NextResponse.json(
+        { error: "Transcript not found for this video." },
+        { status: 404 }
+      );
     }
 
-    const baseUrl = process.env.NEXT_PUBLIC_BASE_URL || "http://localhost:3001";
-    const res = await fetch(`${baseUrl}/api/get-candidate-videos?candidateId=${candidateId}`);
-    if (!res.ok) {
-      return NextResponse.json({ error: "Failed to fetch candidate videos" }, { status: 500 });
-    }
+    const transcript = video.transcript;
+    const prompt = buildPrompt(transcript);
 
-    const data = await res.json();
-    const videos = data.videos || [];
-    const video = videos.find((v: any) => v.filename === videoFilename);
+    console.log("🧠 Sending prompt to Gemini...");
+    console.log(prompt.substring(0, 200) + "...");
 
-    if (!video || !video.transcript) {
-      return NextResponse.json({ error: "Transcript not found for this video" }, { status: 404 });
-    }
+    const model = genAI.getGenerativeModel({ model: modelName });
+    const result = await model.generateContent({
+      contents: [{ role: "user", parts: [{ text: prompt }] }],
+      generationConfig: {
+        responseMimeType: "application/json",
+        responseSchema: feedbackSchema,
+      },
+    });
 
-    const prompt = buildPrompt(video.transcript);
-
-    const genAI = new GoogleGenerativeAI(GEMINI_API_KEY!);
-    const model = genAI.getGenerativeModel({ model: "gemini-1.5-flash" });
-
-    const result = await model.generateContent(prompt);
     const text = result.response.text();
+    console.log("✅ Gemini responded successfully!");
+    console.log("Response preview:", text.substring(0, 200) + "...");
 
-    const jsonResponse = extractJSON(text);
-
+    const jsonResponse = JSON.parse(text);
     return NextResponse.json(jsonResponse);
-  } catch (error: any) {
-    console.error("Analyze error:", error);
-    return NextResponse.json({ error: "Failed to analyze video", detail: error.message }, { status: 500 });
+  } catch (err: any) {
+    console.error("❌ Error analyzing video:", err);
+    return NextResponse.json(
+      { error: "Error analyzing video", detail: err.message },
+      { status: 500 }
+    );
   }
 }
