@@ -1,7 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";
 import { GoogleGenerativeAI, SchemaType } from "@google/generative-ai";
 
-// 🔹 Import same mock data logic directly (copied or modularized)
 const mockVideos: Record<string, any[]> = {
   "1": [
     {

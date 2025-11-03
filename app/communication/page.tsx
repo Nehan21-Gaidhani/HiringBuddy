@@ -54,8 +54,8 @@ interface MessageTemplate {
 const initialCandidates: Candidate[] = [
   {
     id: 1,
-    name: "Sarah Johnsina",
-    email: "sarah.johnson@email.com",
+    name: "Parth Wankar",
+    email: "parthwankar@gmail.com",
     position: "Senior Frontend Developer",
     score: 0,
     status: "Interview Scheduled",

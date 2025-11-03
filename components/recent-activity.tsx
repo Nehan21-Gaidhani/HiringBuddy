@@ -5,7 +5,7 @@ const activities = [
   {
     id: 1,
     type: "resume_uploaded",
-    candidate: "Sarah Johnson",
+    candidate: "Parth Wankar",
     position: "Senior Frontend Developer",
     time: "2 hours ago",
     score: 92,

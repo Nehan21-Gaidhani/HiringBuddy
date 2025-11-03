@@ -36,8 +36,8 @@ import { VideoAnalysis } from "@/components/video-analysis"
 const candidates = [
   {
     id: 1,
-    name: "Sarah Johnson",
-    email: "sarah.johnson@email.com",
+    name: "Parth Wankar",
+    email: "parthwankar@gmail.com",
     position: "Senior Frontend Developer",
     score: 92,
     status: "Interview Scheduled",
