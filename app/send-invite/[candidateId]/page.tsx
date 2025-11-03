@@ -31,7 +31,7 @@ import Link from "next/link";
 const candidatesListFromStaticFile = [
   {
     id: 1,
-    name: "Sarah Johnson",
+    name: "Parth Wankar",
     email: "parthwankar@gmail.com",
     position: "Senior Frontend Developer",
   },

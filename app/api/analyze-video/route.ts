@@ -87,7 +87,7 @@ Return valid JSON only.
 }
 
 export async function POST(req: NextRequest) {
-  console.log("📡 API hit → /api/analyze-video");
+  console.log(" API hit → /api/analyze-video");
 
   if (!genAI) {
     return NextResponse.json({ error: "Gemini API key missing" }, { status: 500 });
@@ -95,7 +95,7 @@ export async function POST(req: NextRequest) {
 
   try {
     const { candidateId, videoFilename } = await req.json();
-    console.log(`🎞️ Candidate ${candidateId}, video ${videoFilename}`);
+    console.log(` Candidate ${candidateId}, video ${videoFilename}`);
 
     const candidateVideos = mockVideos[candidateId];
     const video = candidateVideos?.find((v) => v.filename === videoFilename);
@@ -110,7 +110,7 @@ export async function POST(req: NextRequest) {
     const transcript = video.transcript;
     const prompt = buildPrompt(transcript);
 
-    console.log("🧠 Sending prompt to Gemini...");
+    console.log(" Sending prompt to Gemini...");
     console.log(prompt.substring(0, 200) + "...");
 
     const model = genAI.getGenerativeModel({ model: modelName });
@@ -123,13 +123,13 @@ export async function POST(req: NextRequest) {
     });
 
     const text = result.response.text();
-    console.log("✅ Gemini responded successfully!");
+    console.log("Gemini responded successfully!");
     console.log("Response preview:", text.substring(0, 200) + "...");
 
     const jsonResponse = JSON.parse(text);
     return NextResponse.json(jsonResponse);
   } catch (err: any) {
-    console.error("❌ Error analyzing video:", err);
+    console.error(" Error analyzing video:", err);
     return NextResponse.json(
       { error: "Error analyzing video", detail: err.message },
       { status: 500 }

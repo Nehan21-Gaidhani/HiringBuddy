@@ -10,7 +10,7 @@ if (!apiKey) {
 
 const genAI = apiKey ? new GoogleGenerativeAI(apiKey) : null;
 // Pick a model name that is supported — see notes below for correct model names
-const modelName = "gemini-2.5-flash";  // ← change if your key supports a different model
+const modelName = "gemini-2.5-flash";  
 const model = genAI?.getGenerativeModel({ model: modelName });
 
 export async function POST(request: NextRequest) {
